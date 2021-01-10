@@ -6,6 +6,7 @@ Servo myservo;  // create servo object to control a servo
 //Servo 3FingerServo;
 //Servo ThumbFlexServo;
 //Servo ThumbAbdServo;
+
 // button lists with related variables for debouncing
 typedef struct Buttons_L {
   int buttonState; // the current reading from the input pin
@@ -14,7 +15,7 @@ typedef struct Buttons_L {
   unsigned long lastDebounceTime; // the last time the output pin was toggled
 
 } Buttons;
-
+/// initialize the button array of list
 Buttons buttons[] = {
   { LOW, LOW, 0, 0}//buttons[0](o/c sensor)
   , {LOW, LOW, 0, 0}//buttons[1](wrist Rotation sensor)
@@ -30,29 +31,8 @@ const int buttonPin4 = 4;    // the number of the pushbutton pin(3Fingers)
 const int buttonPin5 = 12;    // the number of the pushbutton pin(thumb sensor)
 
 ////////potenttial problem: might need an extra sensor for the thumb since it uses 2 motors/////////
-const int ledPin = 13;      // the number of the LED pin
 
-// Variables will change:
-int ledState = HIGH;
-// Variables will change:
-/*int buttonState = LOW;           // the current reading from the input pin(o/c sensor)
-int buttonState2 = LOW;             // the current reading from the input pin(wrist Rotation sensor)
-int buttonState3 = LOW;           // the current reading from the input pin(index sensor)
-int buttonState4 = LOW;           // the current reading from the input pin(3Fingers)
-int buttonState5 = LOW;            // the current reading from the input pin(thumb sensor)
 
-int lastButtonState = LOW;   // the previous reading from the input pin(o/c sensor)
-int lastButtonState2 = LOW;  // the previous reading from the input pin(wrist Rotation sensor)
-int lastButtonState3 = LOW;  // the previous reading from the input pin(index sensor)
-int lastButtonState4 = LOW;  // the previous reading from the input pin(3Fingers)
-int lastButtonState5 = LOW;  // the previous reading from the input pin(thumb sensor)
-
-int pos = 0;    // variable to store the servo position(o/c sensor)
-int pos2 = 0;    // variable to store the servo position(wrist Rotation sensor)
-int pos3 = 0;    // variable to store the servo position(index sensor)
-int pos4 = 0;    // variable to store the servo position(3Fingers)
-int pos5 = 0;    // variable to store the servo position(thumb sensor)
-*/
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
 //unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
@@ -60,39 +40,56 @@ unsigned long debounceDelay = 50;    // the debounce time; increase if the outpu
 
 void setup() {
   myservo.attach(5);  // attaches the servo on pin 5 to the servo object
+  //WristServo.attach();
+  //IndexServo.attach();
+  //3FingerServo.attach();
+  //ThumbFlexServo.attach();
+  //ThumbAbdServo.attach();
   pinMode(buttonPin, INPUT);
   pinMode(buttonPin2, INPUT);
   pinMode(buttonPin3, INPUT);
   pinMode(buttonPin4, INPUT);
   pinMode(buttonPin5, INPUT);
-  digitalWrite(ledPin, ledState);
+  // digitalWrite(ledPin, ledState);
   Serial.begin(9600);
   myservo.write(buttons[0].pos); // tells servo to start at positon 0
-
+  //WristServo.write(buttons[1].pos);
+  //IndexServo.write(buttons[2].pos);
+  //3FingerServo.write(buttons[3].pos);
+  //ThumbFlexServo.write(buttons[4].pos);
+  //ThumbAbdServo.write(buttons[5].pos);
 }
 
 void OC() {
   // will close or open hand
-  //all sfinger related servos will run
+  //all finger related servos will run
   if (buttons[0].buttonState == HIGH) {
     if (buttons[0].pos >= 180) {
-      for (buttons[3].pos = 180; buttons[0].pos >= 0; buttons[0].pos -= 1) {
-        myservo.write(buttons[0].pos);              // tell servo to go to position in variable 'pos'
+      for (buttons[0].pos = 180; buttons[0].pos >= 0; buttons[0].pos -= 1) {
+        myservo.write(buttons[0].pos); // tell servo to go to position in variable 'pos'
+        //IndexServo.write(buttons[0].pos);
+        //3FingerServo.write(buttons[0].pos);
+        //ThumbFlexServo.write(buttons[0].pos);
+        //ThumbAbdServo.write(buttons[0].pos);
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
     else {
       for (buttons[0].pos = 0; buttons[0].pos <= 180; buttons[0].pos += 1) {
         myservo.write(buttons[0].pos);              // tell servo to go to position in variable 'pos'
+        //IndexServo.write(buttons[0].pos);
+        //3FingerServo.write(buttons[0].pos);
+        //ThumbFlexServo.write(buttons[0].pos);
+        //ThumbAbdServo.write(buttons[0].pos);
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
   }
 }
-void wristRotation() {
 
+void wristRotation() {
   // only toggle the servo to move by 90 degrees and reset to 0 when it's at 180 if the new button state is HIGH
-  // operates the rotation og the wrist
+  // operates the rotation of the wrist
   if (buttons[1].buttonState == HIGH) {
     if (buttons[1].pos == 180)
       buttons[1].pos = 0;
@@ -101,10 +98,10 @@ void wristRotation() {
     myservo.write(buttons[1].pos);
   }
 }
+
 void indexMov() {
+  // willt move the indexf finger from 0 to 180 and vice versa
   if (buttons[2].buttonState == HIGH) {
-    //Serial.print(pos);
-    //Serial.print("\n");
     if (buttons[2].pos >= 180) {
       for (buttons[2].pos = 180; buttons[2].pos >= 0; buttons[2].pos -= 1) {
         myservo.write(buttons[2].pos);              // tell servo to go to position in variable 'pos'
@@ -119,11 +116,10 @@ void indexMov() {
     }
   }
 }
+
 void fingers_3F() {
-  // operates the 3 fingers
+  // operates the 3 fingers, move the fringers from 0 to 180 and vice versa
   if (buttons[3].buttonState == HIGH) {
-    //Serial.print(pos);
-    //Serial.print("\n");
     if (buttons[3].pos >= 180) {
       for (buttons[3].pos = 180; buttons[3].pos >= 0; buttons[3].pos -= 1) {
         myservo.write(buttons[3].pos);              // tell servo to go to position in variable 'pos'
@@ -138,10 +134,10 @@ void fingers_3F() {
     }
   }
 }
+
 void ThumbMov() {
+  // move the thum from 0 to 180
   if (buttons[4].buttonState == HIGH) {
-    //Serial.print(pos);
-    //Serial.print("\n");
     if (buttons[4].pos >= 180) {
       for (buttons[4].pos = 180; buttons[4].pos >= 0; buttons[4].pos -= 1) {
         myservo.write(buttons[4].pos);              // tell servo to go to position in variable 'pos'
@@ -158,33 +154,9 @@ void ThumbMov() {
 }
 
 void debounceButtonsExecute(int reading, int num) {
-  // int BState ;
-  //int LState ;
-
-  /*if (num == 1) {
-    BState = buttonState;
-    LState = lastButtonState;
-    }
-    else if (num == 2) {
-    BState = buttonState2;
-    LState = lastButtonState2;
-    }
-    else if (num == 3) {
-    BState = buttonState3;
-    LState = lastButtonState3;
-    }
-    else if (num == 4) {
-    BState = buttonState4;
-    LState = lastButtonState4;
-    }
-    else if (num == 5) {
-    BState = buttonState5;
-    LState = lastButtonState5;
-    }*/
   // check to see if you just pressed the button
   // (i.e. the input went from LOW to HIGH), and you've waited long enough
   // since the last press to ignore any noise:
-
   // If the switch changed, due to noise or pressing:
   if (reading != buttons[num].lastButtonState) {
     // reset the debouncing timer
@@ -211,25 +183,8 @@ void debounceButtonsExecute(int reading, int num) {
     }
   }
   buttons[num].lastButtonState = reading;
-  /* if (num == 1) {
-     //buttonState = BState;
-     buttons[num].lastButtonState = reading;
-    }
-    else if (num == 2) {
-     // buttonState2 = BState;
-     lastButtonState2 = reading;
-    }
-    else if (num == 3) {
-     lastButtonState3 = reading;
-    }
-    else if (num == 4) {
-     lastButtonState4 = reading;
-
-    }
-    else if (num == 5) {
-     lastButtonState5 = reading;
-    }*/
 }
+
 void loop() {
   // read the state of the switch into a local variable:
   int reading = digitalRead(buttonPin);
@@ -244,6 +199,6 @@ void loop() {
   debounceButtonsExecute(reading2, 1);
   debounceButtonsExecute(reading3, 2);
   //debounceButtonsExecute(reading4, 3);
- // debounceButtonsExecute(reading5, 4);
-  
+  // debounceButtonsExecute(reading5, 4);
+
 }
