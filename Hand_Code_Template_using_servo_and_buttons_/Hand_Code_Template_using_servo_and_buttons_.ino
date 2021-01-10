@@ -50,7 +50,6 @@ void setup() {
   pinMode(buttonPin3, INPUT);
   pinMode(buttonPin4, INPUT);
   pinMode(buttonPin5, INPUT);
-  // digitalWrite(ledPin, ledState);
   Serial.begin(9600);
   myservo.write(buttons[0].pos); // tells servo to start at positon 0
   //WristServo.write(buttons[1].pos);
