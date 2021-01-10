@@ -188,16 +188,14 @@ void loop() {
   // read the state of the switch into a local variable:
   int reading = digitalRead(buttonPin);
   int reading2 = digitalRead(buttonPin2);
-
   int reading3 = digitalRead(buttonPin3);
   //int reading = digitalRead(buttonPin4);
   //int reading = digitalRead(buttonPin5);
-  //debounceButtons(reading, 1);
   debounceButtonsExecute(reading, 0);
 
   debounceButtonsExecute(reading2, 1);
   debounceButtonsExecute(reading3, 2);
   //debounceButtonsExecute(reading4, 3);
-  // debounceButtonsExecute(reading5, 4);
+  //debounceButtonsExecute(reading5, 4);
 
 }
