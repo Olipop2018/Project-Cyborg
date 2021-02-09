@@ -1,11 +1,10 @@
 #include <Servo.h>
 
 Servo myservo;  // create servo object to control a servo
-//Servo WristServo;
-//Servo IndexServo;
+Servo WristServo;
+Servo IndexServo;
 //Servo 3FingerServo;
-//Servo ThumbFlexServo;
-//Servo ThumbAbdServo;
+Servo ThumbServo;
 
 // button lists with related variables for debouncing
 typedef struct Buttons_L {
@@ -23,12 +22,13 @@ Buttons buttons[] = {
   , {LOW, LOW, 0, 0}//buttons[3](3Fingers)
   , { LOW, LOW, 0, 0}//buttons[4](thumb sensor)
 };
+int pos=0;
 // constants won't change. They're used here to set pin numbers:
 const int buttonPin = 2;    // the number of the pushbutton pin(o/c sensor)
 const int buttonPin2 = 8;    // the number of the pushbutton pin(wrist Rotation sensor)
 const int buttonPin3 = 7;    // the number of the pushbutton pin(index sensor)
 const int buttonPin4 = 4;    // the number of the pushbutton pin(3Fingers)
-const int buttonPin5 = 12;    // the number of the pushbutton pin(thumb sensor)
+const int buttonPin5 = 13;    // the number of the pushbutton pin(thumb sensor)
 
 ////////potenttial problem: might need an extra sensor for the thumb since it uses 2 motors/////////
 
@@ -40,11 +40,10 @@ unsigned long debounceDelay = 50;    // the debounce time; increase if the outpu
 
 void setup() {
   myservo.attach(5);  // attaches the servo on pin 5 to the servo object
-  //WristServo.attach();
-  //IndexServo.attach();
+  ThumbServo.attach(9);
+  WristServo.attach(11);
+  IndexServo.attach(10);
   //3FingerServo.attach();
-  //ThumbFlexServo.attach();
-  //ThumbAbdServo.attach();
   pinMode(buttonPin, INPUT);
   pinMode(buttonPin2, INPUT);
   pinMode(buttonPin3, INPUT);
@@ -52,11 +51,11 @@ void setup() {
   pinMode(buttonPin5, INPUT);
   Serial.begin(9600);
   myservo.write(buttons[0].pos); // tells servo to start at positon 0
-  //WristServo.write(buttons[1].pos);
-  //IndexServo.write(buttons[2].pos);
-  //3FingerServo.write(buttons[3].pos);
-  //ThumbFlexServo.write(buttons[4].pos);
-  //ThumbAbdServo.write(buttons[5].pos);
+  WristServo.write(buttons[1].pos);
+  IndexServo.write(buttons[2].pos);
+  //3FingerServos.write(buttons[3].pos);
+  ThumbServo.write(buttons[4].pos);
+  
 }
 
 void OC() {
@@ -94,7 +93,7 @@ void wristRotation() {
       buttons[1].pos = 0;
     else
       buttons[1].pos += 90;
-    myservo.write(buttons[1].pos);
+    WristServo.write(buttons[1].pos);
   }
 }
 
@@ -103,13 +102,13 @@ void indexMov() {
   if (buttons[2].buttonState == HIGH) {
     if (buttons[2].pos >= 180) {
       for (buttons[2].pos = 180; buttons[2].pos >= 0; buttons[2].pos -= 1) {
-        myservo.write(buttons[2].pos);              // tell servo to go to position in variable 'pos'
+        IndexServo.write(buttons[2].pos);              // tell servo to go to position in variable 'pos'
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
     else {
       for (buttons[2].pos = 0; buttons[2].pos <= 180; buttons[2].pos += 1) {
-        myservo.write(buttons[2].pos);              // tell servo to go to position in variable 'pos'
+        IndexServo.write(buttons[2].pos);              // tell servo to go to position in variable 'pos'
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
@@ -136,16 +135,17 @@ void fingers_3F() {
 
 void ThumbMov() {
   // move the thum from 0 to 180
+ // Serial.print("im in thumb move");
   if (buttons[4].buttonState == HIGH) {
     if (buttons[4].pos >= 180) {
       for (buttons[4].pos = 180; buttons[4].pos >= 0; buttons[4].pos -= 1) {
-        myservo.write(buttons[4].pos);              // tell servo to go to position in variable 'pos'
+        ThumbServo.write(buttons[4].pos);              // tell servo to go to position in variable 'pos'
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
     else {
       for (buttons[4].pos = 0; buttons[4].pos <= 180; buttons[4].pos += 1) {
-        myservo.write(buttons[4].pos);              // tell servo to go to position in variable 'pos'
+        ThumbServo.write(buttons[4].pos);              // tell servo to go to position in variable 'pos'
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
@@ -189,13 +189,26 @@ void loop() {
   int reading = digitalRead(buttonPin);
   int reading2 = digitalRead(buttonPin2);
   int reading3 = digitalRead(buttonPin3);
-  //int reading = digitalRead(buttonPin4);
-  //int reading = digitalRead(buttonPin5);
+ // int reading4 = digitalRead(buttonPin4);
+  int reading5 = digitalRead(buttonPin5);
+// Serial.print(reading5);
+ // Serial.print("\n");
+ /* if (reading == HIGH){
+  for (pos=0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree 
+      myservo.write(pos);              // tell servo to go to position in variable 'pos'
+   
+    delay(15);      
+    }
+  }   
+   else{
+     myservo.write(0);
+     }*/
   debounceButtonsExecute(reading, 0);
-
+//myservo.write(50);
   debounceButtonsExecute(reading2, 1);
   debounceButtonsExecute(reading3, 2);
   //debounceButtonsExecute(reading4, 3);
-  //debounceButtonsExecute(reading5, 4);
+  debounceButtonsExecute(reading5, 4);
 
 }
