@@ -23,6 +23,8 @@ Buttons buttons[] = {
   , { LOW, LOW, 0, 0}//buttons[4](thumb sensor)
 };
 int pos=0;
+int count=0;
+int count2=0;
 // constants won't change. They're used here to set pin numbers:
 const int buttonPin = 2;    // the number of the pushbutton pin(o/c sensor)
 const int buttonPin2 = 8;    // the number of the pushbutton pin(wrist Rotation sensor)
@@ -61,14 +63,16 @@ void setup() {
 void OC() {
   // will close or open hand
   //all finger related servos will run
-  if (buttons[0].buttonState == HIGH) {
+  Serial.println("im in OC()");
+ // if (buttons[0].buttonState == HIGH) {
+   // Serial.println("im in OC() and im HIGH");
     if (buttons[0].pos >= 180) {
       for (buttons[0].pos = 180; buttons[0].pos >= 0; buttons[0].pos -= 1) {
         myservo.write(buttons[0].pos); // tell servo to go to position in variable 'pos'
         //IndexServo.write(buttons[0].pos);
         //3FingerServo.write(buttons[0].pos);
-        //ThumbFlexServo.write(buttons[0].pos);
-        //ThumbAbdServo.write(buttons[0].pos);
+        //ThumbServo.write(buttons[0].pos);
+       
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
@@ -77,12 +81,12 @@ void OC() {
         myservo.write(buttons[0].pos);              // tell servo to go to position in variable 'pos'
         //IndexServo.write(buttons[0].pos);
         //3FingerServo.write(buttons[0].pos);
-        //ThumbFlexServo.write(buttons[0].pos);
-        //ThumbAbdServo.write(buttons[0].pos);
+        //ThumbServo.write(buttons[0].pos);
+        
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
-  }
+  
 }
 
 void wristRotation() {
@@ -99,7 +103,7 @@ void wristRotation() {
 
 void indexMov() {
   // willt move the indexf finger from 0 to 180 and vice versa
-  if (buttons[2].buttonState == HIGH) {
+ // if (buttons[2].buttonState == HIGH) 
     if (buttons[2].pos >= 180) {
       for (buttons[2].pos = 180; buttons[2].pos >= 0; buttons[2].pos -= 1) {
         IndexServo.write(buttons[2].pos);              // tell servo to go to position in variable 'pos'
@@ -112,31 +116,31 @@ void indexMov() {
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
-  }
+  
 }
 
 void fingers_3F() {
   // operates the 3 fingers, move the fringers from 0 to 180 and vice versa
-  if (buttons[3].buttonState == HIGH) {
+ // if (buttons[3].buttonState == HIGH) {
     if (buttons[3].pos >= 180) {
       for (buttons[3].pos = 180; buttons[3].pos >= 0; buttons[3].pos -= 1) {
-        myservo.write(buttons[3].pos);              // tell servo to go to position in variable 'pos'
+       //3FingerServos.write(buttons[3].pos);              // tell servo to go to position in variable 'pos'
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
     else {
       for (buttons[3].pos = 0; buttons[3].pos <= 180; buttons[3].pos += 1) {
-        myservo.write(buttons[3].pos);              // tell servo to go to position in variable 'pos'
+       //3FingerServos.write(buttons[3].pos);              // tell servo to go to position in variable 'pos'
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
-  }
+  
 }
 
 void ThumbMov() {
   // move the thum from 0 to 180
  // Serial.print("im in thumb move");
-  if (buttons[4].buttonState == HIGH) {
+ // if (buttons[4].buttonState == HIGH) {
     if (buttons[4].pos >= 180) {
       for (buttons[4].pos = 180; buttons[4].pos >= 0; buttons[4].pos -= 1) {
         ThumbServo.write(buttons[4].pos);              // tell servo to go to position in variable 'pos'
@@ -149,7 +153,7 @@ void ThumbMov() {
         delay(15);                       // waits 15ms for the servo to reach the position
       }
     }
-  }
+  
 }
 
 void debounceButtonsExecute(int reading, int num) {
@@ -169,7 +173,16 @@ void debounceButtonsExecute(int reading, int num) {
     // if the button state has changed:
     if (reading != buttons[num].buttonState) {
       buttons[num].buttonState = reading;
-      if (num == 0)
+      //if the butteon was pressed under half a second increase the counter
+      if (buttons[num].buttonState == HIGH) {
+       if(millis() - buttons[num].lastDebounceTime < 500){
+        if(num==1)
+        count2++;
+        else
+        count++;
+        }
+      }
+     /* if (num == 0)
         OC();
       else if (num == 1)
         wristRotation();
@@ -178,7 +191,7 @@ void debounceButtonsExecute(int reading, int num) {
       else if (num == 3)
         fingers_3F();
       else if (num == 4)
-        ThumbMov();
+        ThumbMov();*/
     }
   }
   buttons[num].lastButtonState = reading;
@@ -188,27 +201,43 @@ void loop() {
   // read the state of the switch into a local variable:
   int reading = digitalRead(buttonPin);
   int reading2 = digitalRead(buttonPin2);
-  int reading3 = digitalRead(buttonPin3);
+ // int reading3 = digitalRead(buttonPin3);
  // int reading4 = digitalRead(buttonPin4);
-  int reading5 = digitalRead(buttonPin5);
+ // int reading5 = digitalRead(buttonPin5);
 // Serial.print(reading5);
- // Serial.print("\n");
- /* if (reading == HIGH){
-  for (pos=0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree 
-      myservo.write(pos);              // tell servo to go to position in variable 'pos'
-   
-    delay(15);      
-    }
-  }   
-   else{
-     myservo.write(0);
-     }*/
-  debounceButtonsExecute(reading, 0);
+ // Serial.print("\n"); 
+ debounceButtonsExecute(reading, 0);
+ 
+ //Serial.println(count);
+if(millis() - buttons[0].lastDebounceTime > 500 && count ==2){
+         OC();
+         count=0;
+        }
+else if(millis() - buttons[0].lastDebounceTime > 500 && count ==1){
+        
+         indexMov();
+         count=0;
+        }
+debounceButtonsExecute(reading2, 1);
+//Serial.println(count2);
+if(millis() - buttons[1].lastDebounceTime > 500 && count2 ==2){
+         fingers_3F();
+         //Serial.println("3fingers move");
+         count2=0;
+        }
+else if(millis() - buttons[1].lastDebounceTime > 500 && count2 ==1){
+        // buttons[3].buttonState = HIGH;
+        ThumbMov();
+         count2=0;
+        }
+/* if(millis() - buttons[2].lastDebounceTime > 500 && count >= 1){
+        wristRotation(); 
+ }*/
+ 
 //myservo.write(50);
-  debounceButtonsExecute(reading2, 1);
-  debounceButtonsExecute(reading3, 2);
+ // debounceButtonsExecute(reading2, 1);
+ // debounceButtonsExecute(reading3, 2);
   //debounceButtonsExecute(reading4, 3);
-  debounceButtonsExecute(reading5, 4);
+ // debounceButtonsExecute(reading5, 4);
 
 }
