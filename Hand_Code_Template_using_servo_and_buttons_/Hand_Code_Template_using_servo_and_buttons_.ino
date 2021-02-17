@@ -32,7 +32,7 @@ const int buttonPin3 = 7;    // the number of the pushbutton pin(index sensor)
 const int buttonPin4 = 4;    // the number of the pushbutton pin(3Fingers)
 const int buttonPin5 = 13;    // the number of the pushbutton pin(thumb sensor)
 
-////////potenttial problem: might need an extra sensor for the thumb since it uses 2 motors/////////
+
 
 
 // the following variables are unsigned longs because the time, measured in
