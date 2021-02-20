@@ -15,7 +15,7 @@ typedef struct Sensors_L {
   unsigned long lastDebounceTime; // the last time the output pin was toggled
 
 } MuscleSensors;
-
+const int thres= 900;
 int readValue = 0;
 int readValue2 = 0;
 int readValue3 = 0;
@@ -79,7 +79,7 @@ void OC() {// will close or open hand and all finger related servos will run
       if (pos3F >= servPos[0]) {
         MiddleFServo.write(servPos[0]);
         RingFServo.write(servPos[0]);
-        LittleFServor.write(servPos[0]);
+      //  LittleFServor.write(servPos[0]);
       }
       delay(15);                       // waits 15ms for the servo to reach the position
     }
@@ -97,7 +97,7 @@ void OC() {// will close or open hand and all finger related servos will run
       if (pos3F <= servPos[0]) {
         MiddleFServo.write(servPos[0]);
         RingFServo.write(servPos[0]);
-        LittleFServor.write(servPos[0]);
+        //LittleFServor.write(servPos[0]);
       }
       delay(15);                       // waits 15ms for the servo to reach the position
     }
@@ -196,7 +196,7 @@ void debounceSensorsCount(int reading, int num) {
       Sensors[num].buttonState = reading;
       //if the butteon was pressed under half a second increase the counter
       if (Sensors[num].buttonState == HIGH) {
-        if (millis() - Sensors[num].lastDebounceTime < 500) {
+        if (millis() - Sensors[num].lastDebounceTime < 1000) {
           ++Sensors[num].count;
           /*if (num == 1)
             count2++;
@@ -210,41 +210,53 @@ void debounceSensorsCount(int reading, int num) {
 }
 
 void loop() {
+  static int state=0;
+  // static int state2=0;
+   // static int state3=0;
   // read the state of the switch into a local variable:
   int reading = analogRead(MSensorPin);
   int reading2 = analogRead(MSensorPin2);
   int reading3 = analogRead(MSensorPin3);
-  readValue = map(reading, 0, 1023, 0, 255);
-  readValue2 = map(reading2, 0, 1023, 0, 255);
-  readValue3 = map(reading3, 0, 1023, 0, 255);
-
-  debounceSensorsCount(reading, 0);
+  //readValue = map(reading, 0, 1023, 0, 255);
+ // readValue2 = map(reading2, 0, 1023, 0, 255);
+  //readValue3 = map(reading3, 0, 1023, 0, 255);
+  if(reading >=thres)
+  state=HIGH;
+  else
+  state=LOW;
+  debounceSensorsCount(state, 0);
   //Serial.println(count);
-  if (millis() - Sensors[0].lastDebounceTime > 500 && Sensors[0].count == 2) {
+  if (millis() - Sensors[0].lastDebounceTime > 1000 && Sensors[0].count == 2) {
     OC();
     Sensors[0].count = 0;
   }
-  else if (millis() - Sensors[0].lastDebounceTime > 500 && Sensors[0].count == 1) {
+  else if (millis() - Sensors[0].lastDebounceTime > 1000 && Sensors[0].count == 1) {
 
     indexMov();
     Sensors[0].count = 0;
   }
-
-  debounceSensorsCount(reading2, 1);
+ if(reading2 >=thres)
+  state=HIGH;
+  else
+  state=LOW;
+  debounceSensorsCount(state, 1);
   //Serial.println(count2);
-  if (millis() - Sensors[1].lastDebounceTime > 500 && Sensors[1].count == 2) {
+  if (millis() - Sensors[1].lastDebounceTime > 1000 && Sensors[1].count == 2) {
     fingers_3F();
     //Serial.println("3fingers move");
     Sensors[1].count = 0;
   }
-  else if (millis() - Sensors[1].lastDebounceTime > 500 && Sensors[1].count == 1) {
+  else if (millis() - Sensors[1].lastDebounceTime > 1000 && Sensors[1].count == 1) {
     // buttons[3].buttonState = HIGH;
     ThumbMov();
     Sensors[1].count = 0;
   }
-
-  debounceSensorsCount(reading3, 2);
-  if (millis() - Sensors[2].lastDebounceTime > 500 && Sensors[2].count >= 1) {
+ if(reading3 >=thres)
+  state=HIGH;
+  else
+  state=LOW;
+  debounceSensorsCount(state, 2);
+  if (millis() - Sensors[2].lastDebounceTime > 1000 && Sensors[2].count >= 1) {
     wristRotation();
     Sensors[2].count = 0;
   }
