@@ -26,10 +26,10 @@ int pos=0;
 int count=0;
 int count2=0;
 // constants won't change. They're used here to set pin numbers:
-const int buttonPin = 2;    // the number of the pushbutton pin(o/c sensor)
-const int buttonPin2 = 8;    // the number of the pushbutton pin(wrist Rotation sensor)
-const int buttonPin3 = 7;    // the number of the pushbutton pin(index sensor)
-const int buttonPin4 = 4;    // the number of the pushbutton pin(3Fingers)
+const int buttonPin = 8;    // the number of the pushbutton pin(o/c sensor)
+const int buttonPin2 = 10;    // the number of the pushbutton pin(wrist Rotation sensor)
+const int buttonPin3 = 11;    // the number of the pushbutton pin(index sensor)
+const int buttonPin4 = 12;    // the number of the pushbutton pin(3Fingers)
 const int buttonPin5 = 13;    // the number of the pushbutton pin(thumb sensor)
 
 
@@ -41,10 +41,10 @@ const int buttonPin5 = 13;    // the number of the pushbutton pin(thumb sensor)
 unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
 
 void setup() {
-  myservo.attach(5);  // attaches the servo on pin 5 to the servo object
-  ThumbServo.attach(9);
-  WristServo.attach(11);
-  IndexServo.attach(10);
+  //myservo.attach(2);  // attaches the servo on pin 5 to the servo object
+  ThumbServo.attach(3);
+  WristServo.attach(7);
+  IndexServo.attach(2);
   //3FingerServo.attach();
   pinMode(buttonPin, INPUT);
   pinMode(buttonPin2, INPUT);
@@ -210,7 +210,7 @@ void loop() {
  
  //Serial.println(count);
 if(millis() - buttons[0].lastDebounceTime > 500 && count ==2){
-         OC();
+        ThumbMov();
          count=0;
         }
 else if(millis() - buttons[0].lastDebounceTime > 500 && count ==1){
@@ -230,6 +230,7 @@ else if(millis() - buttons[1].lastDebounceTime > 500 && count2 ==1){
         ThumbMov();
          count2=0;
         }
+delay(50);
 /* if(millis() - buttons[2].lastDebounceTime > 500 && count >= 1){
         wristRotation(); 
  }*/
