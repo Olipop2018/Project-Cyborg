@@ -209,6 +209,7 @@ void ThumbMov() {
 }
 
 void debounceButtonsExecute(int reading, int num) {
+ 
   // check to see if you just pressed the button
   // (i.e. the input went from LOW to HIGH), and you've waited long enough
   // since the last press to ignore any noise:
@@ -216,18 +217,26 @@ void debounceButtonsExecute(int reading, int num) {
   if (reading != buttons[num].lastButtonState) {
     // reset the debouncing timer
     buttons[num].lastDebounceTime = millis();
+   // Serial.println("in here resetted lasdb ");
   }
 
   if ((millis() - buttons[num].lastDebounceTime) > debounceDelay) {
     // whatever the reading is at, it's been there for longer than the debounce
     // delay, so take it as the actual current state:
-
+// Serial.print("reading in DBE = ");
+ // Serial.println(reading);
     // if the button state has changed:
     if (reading != buttons[num].buttonState) {
       buttons[num].buttonState = reading;
       //if the butteon was pressed under half a second increase the counter
       if (buttons[num].buttonState == HIGH) {
+     //   Serial.print("in here button is high ");
+        // Serial.println(reading);
+        //  Serial.print("reading2 = ");
+        //Serial.println(reading2);
+        // Serial.print("\n");
         if (millis() - buttons[num].lastDebounceTime < 500) {
+         // Serial.print("in here less  han 1000 ");
           if (num == 1)
             count2++;
           else
@@ -237,6 +246,7 @@ void debounceButtonsExecute(int reading, int num) {
 
     }
   }
+    buttons[num].lastButtonState = reading;
 }
 void operation() {
 
@@ -245,25 +255,32 @@ void operation() {
   // int reading3 = digitalRead(buttonPin3);
   // int reading4 = digitalRead(buttonPin4);
   // int reading5 = digitalRead(buttonPin5);
-  // Serial.print(reading5);
+ // Serial.print("reading = ");
+  //Serial.println(reading);
+  //  Serial.print("reading2 = ");
+  // Serial.println(reading2);
   // Serial.print("\n");
   debounceButtonsExecute(reading, 0);
 
   //Serial.println(count);
-
+  // Serial.print("count = ");
+  // Serial.println(count);
+  //  Serial.print("reading2 = ");
+  // Serial.println(reading2);
+  // Serial.print("\n");
   if (millis() - buttons[0].lastDebounceTime > 500 && count == 1) {
 
     OC();
     count = 0;
   }
-  debounceButtonsExecute(reading2, 1);
+ debounceButtonsExecute(reading2, 1);
   //Serial.println(count2);
   if (millis() - buttons[1].lastDebounceTime > 500 && count2 == 1) {
     // buttons[3].buttonState = HIGH;
     Pinch();
     count2 = 0;
   }
-  delay(100);
+  delay(50);
 }
 /*bool sample(int num, int pin) {
   Serial.println("in sample function");
@@ -286,8 +303,8 @@ void operation() {
   Serial.println(samp);
   return samp;
 
-}
-void callibrate(int num, int pin) {
+  }
+  void callibrate(int num, int pin) {
   static int state = 0;
   static int reading = 0;
   Serial.println("in callibrate function");
@@ -318,7 +335,7 @@ void callibrate(int num, int pin) {
     }
 
   }
-}*/
+  }*/
 void changeModes(int reading) {
   if (reading != lastButtonState) {
     // reset the debouncing timer
@@ -358,8 +375,8 @@ void changeModes(int reading) {
   }
   else
     return false;
-}
-bool toohigh2(int val) {
+  }
+  bool toohigh2(int val) {
   if (val > thresMax2) {
     RGB(255, 0, 0);
     delay(200);
@@ -374,7 +391,7 @@ bool toohigh2(int val) {
   }
   else
     return false;
-}*/
+  }*/
 void loop() {
   //int reading = digitalRead(buttonPin);
   // changeModes(reading);
