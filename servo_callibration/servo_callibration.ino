@@ -38,7 +38,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 
 // our servo # counter
-uint8_t servonum = 0;
+uint8_t servonum = 4;
 int pulselen;
 int buttonState = 0;
 const int buttonPin = 8;
@@ -84,10 +84,10 @@ void loop() {
       Serial.println(pulselen);
 
       //Drive the servo with PWM
-      pwm.setPWM(servonum, 0, pulselen);
-      // pwm.setPWM(4, 0, pulselen);
-      //  pwm.setPWM(8, 0, pulselen);
-      //   pwm.setPWM(12, 0, pulselen);
+     // pwm.setPWM(servonum, 0, pulselen);
+      pwm.setPWM(4, 0, pulselen);
+       pwm.setPWM(8, 0, pulselen);
+       pwm.setPWM(12, 0, pulselen);
       //pwm.setPWM(1, 0, pulselen);
 
       //Increase PWM
