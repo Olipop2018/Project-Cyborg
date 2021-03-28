@@ -19,7 +19,10 @@
 
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
-
+#include <Servo.h>
+Servo IndexServo;
+Servo F3Servo;
+Servo ThumbServo;
 // called this way, it uses the default address 0x40
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 // you can also call it with a different address you want
@@ -36,17 +39,22 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define USMIN  600 // This is the rounded 'minimum' microsecond length based on the minimum pulse of 150
 #define USMAX  2400 // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
-
+#define MAX 180
+#define MIN 0
 // our servo # counter
 uint8_t servonum = 4;
 int pulselen;
+int num;
 int buttonState = 0;
 const int buttonPin = 8;
 void setup() {
+  ThumbServo.attach(5);
+  IndexServo.attach(6);
+  F3Servo.attach(7);
   Serial.begin(9600);
   Serial.println("8 channel Servo test!");
   pinMode(buttonPin, INPUT);
-  pwm.begin();
+  // pwm.begin();
   /*
      In theory the internal oscillator (clock) is 25MHz but it really isn't
      that precise. You can 'calibrate' this by tweaking this number until
@@ -64,41 +72,50 @@ void setup() {
      Failure to correctly set the int.osc value will cause unexpected PWM results
   */
   //pwm.setOscillatorFrequency(27000000);
-  pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
-  pulselen = SERVOMIN;
- pwm.setPWM(servonum, 0, pulselen);
+  //  pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
+  //  pulselen = SERVOMIN;
+  //  pwm.setPWM(servonum, 0, pulselen);
+  num= MIN;
+  IndexServo.write(num);
+  F3Servo.write(num);
+  ThumbServo.write(num);
   delay(10);
 }
 
-
+//int cnt = 0;
 
 void loop() {
-   buttonState = digitalRead(buttonPin);
+  buttonState = digitalRead(buttonPin);
   // Drive each servo one at a time using setPWM()
   if (buttonState == HIGH) {
     //if (pulselen < SERVOMAX) {
+//    cnt++;
 
+    //Print the PWM value to Serial Monitor
+    Serial.print("position: ");
+    Serial.println(num);
 
-      //Print the PWM value to Serial Monitor
-      Serial.print("Pulse Length is:");
-      Serial.println(pulselen);
-
-      //Drive the servo with PWM
-     // pwm.setPWM(servonum, 0, pulselen);
-      pwm.setPWM(4, 0, pulselen);
-       pwm.setPWM(8, 0, pulselen);
-       pwm.setPWM(12, 0, pulselen);
-      //pwm.setPWM(1, 0, pulselen);
-
-      //Increase PWM
-    if(pulselen == SERVOMAX)
-     pulselen = SERVOMIN;
-      else
-      pulselen = SERVOMAX;
-      //pulselen_1=pulselen;
-      //pulselen=pulselen+5;
-      delay(500);
-   // }
+    //Drive the servo with PWM
+    // pwm.setPWM(servonum, 0, pulselen);
+    //    pwm.setPWM(4, 0, pulselen);
+    //    pwm.setPWM(8, 0, pulselen);
+    //    pwm.setPWM(12, 0, pulselen);
+    //pwm.setPWM(1, 0, pulselen);
+    //IndexServo.write(num);
+    F3Servo.write(num);
+    //ThumbServo.write(num);
+    //Increase PWM
+    //    if (pulselen == SERVOMAX)
+    //
+    //      pulselen = SERVOMIN;
+    //    else
+    //      pulselen = SERVOMAX;
+    num+=10;
+    delay(100);
+    //pulselen_1=pulselen;
+    //pulselen=pulselen+5;
+    // delay(500);
+    // }
 
   }
 }
