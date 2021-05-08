@@ -1,11 +1,11 @@
 #include <Servo.h>
 #include <Wire.h>
-#include <Adafruit_PWMServoDriver.h>
+//#include <Adafruit_PWMServoDriver.h>
 
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
-#define SERVOMIN  80 ///(76 for 2)(77 for the Ring servo)// This is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX  400 //(573)(577 on ring servo) This is the 'maximum' pulse length count (out of 4096)
-#define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
+//Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+//#define SERVOMIN  80 ///(76 for 2)(77 for the Ring servo)// This is the 'minimum' pulse length count (out of 4096)
+//#define SERVOMAX  400 //(573)(577 on ring servo) This is the 'maximum' pulse length count (out of 4096)
+//#define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 Servo IndexServo;
 Servo F3Servos;
 Servo Thumbservo;
@@ -50,10 +50,10 @@ const int redpin = 2;
 const int greenpin = 3;
 const int bluepin = 4;
 
-uint8_t WristServo = 0;
-uint8_t IndexFServo = 4;
-uint8_t F3Servo = 8;
-uint8_t ThumbServo = 12;
+//uint8_t WristServo = 0;
+//uint8_t IndexFServo = 4;
+//uint8_t F3Servo = 8;
+//uint8_t ThumbServo = 12;
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
 unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
@@ -80,7 +80,7 @@ void OC() {// will close or open hand and all finger related servos will run
   if (servPos[0] >= 180) {
     ///this will move all relate fingers to a closed hand state according to their current prositions.
     for (servPos[0] = 180; servPos[0] >= 0; --servPos[0]) {
-      pulselen = map (servPos[0], 0, 180, SERVOMIN, SERVOMAX);
+//      pulselen = map (servPos[0], 0, 180, SERVOMIN, SERVOMAX);
       if (posIF >= servPos[0])
         IndexServo.write(servPos[0]);
       // pwm.setPWM(IndexFServo, 0, pulselen);
@@ -123,18 +123,7 @@ void RGB(int redval, int greenval, int blueval)
   analogWrite(greenpin, greenval);
   analogWrite(bluepin, blueval);
 }
-void wristRotation() {
-  // only toggle the servo to move by 90 degrees and reset to 0 when it's at 180 if the new button state is HIGH
-  // operates the rotation of the wrist
-  int pulselenW;
-  if (servPos[1] == 180)
-    servPos[1] = 0;
-  else
-    servPos[1] += 90;
-  pulselenW = map (servPos[1], 0, 180, SERVOMIN, SERVOMAX);
-  pwm.setPWM(WristServo, 0, pulselenW);
 
-}
 
 void Pinch() {
   // only toggle the servo to move by 90 degrees and reset to 0 when it's at 180 if the new button state is HIGH
@@ -149,66 +138,78 @@ void Pinch() {
   Thumbservo.write(servPos[1]);// pwm.setPWM(ThumbServo, 0, pulselenP);
 
 }
-void indexMov() {
-  // willt move the indexf finger from 0 to 180 and vice versa
-  int pulselenI;
-  if (servPos[2] >= 180) {
-    for (servPos[2] = 180; servPos[2] >= 0; --servPos[2]) {
-      pulselenI = map (servPos[2], 0, 180, SERVOMIN, SERVOMAX);
-      pwm.setPWM(IndexFServo, 0, pulselenI);              // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
-    }
-  }
-  else {
-    for (servPos[2] = 0; servPos[2] <= 180; ++servPos[2]) {
-      pulselenI = map (servPos[2], 0, 180, SERVOMIN, SERVOMAX);
-      pwm.setPWM(IndexFServo, 0, pulselenI);             // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
-    }
-  }
-
-}
-
-void fingers_3F() {
-  // operates the 3 fingers, move the fringers from 0 to 180 and vice versa
-  int pulselen3F;
-  if (servPos[3] >= 160) {
-    for (servPos[3] = 160; servPos[3] >= 0; --servPos[3]) {
-      pulselen3F = map (servPos[3], 0, 180, SERVOMIN, SERVOMAX);
-      pwm.setPWM(F3Servo, 0, pulselen3F); // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
-    }
-  }
-  else {
-    for (servPos[3] = 0; servPos[3] <= 160; ++servPos[3]) {
-      pulselen3F = map (servPos[3], 0, 180, SERVOMIN, SERVOMAX);
-      pwm.setPWM(F3Servo, 0, pulselen3F); // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
-    }
-  }
-
-}
-
-void ThumbMov() {
-  // move the thum from 0 to 180
-  // Serial.print("im in thumb move");
-  int pulselenT;
-  if (servPos[4] >= 180) {
-    for (servPos[4] = 180; servPos[4] >= 0; --servPos[4]) {
-      pulselenT = map (servPos[4], 0, 180, SERVOMIN, SERVOMAX);
-      pwm.setPWM(ThumbServo, 0, pulselenT);              // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
-    }
-  }
-  else {
-    for (servPos[4] = 0; servPos[4] <= 180; ++servPos[4]) {
-      pulselenT = map (servPos[4], 0, 180, SERVOMIN, SERVOMAX);
-      pwm.setPWM(ThumbServo, 0, pulselenT);              // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
-    }
-  }
-
-}
+//void wristRotation() {
+//  // only toggle the servo to move by 90 degrees and reset to 0 when it's at 180 if the new button state is HIGH
+//  // operates the rotation of the wrist
+//  int pulselenW;
+//  if (servPos[1] == 180)
+//    servPos[1] = 0;
+//  else
+//    servPos[1] += 90;
+//  pulselenW = map (servPos[1], 0, 180, SERVOMIN, SERVOMAX);
+//  pwm.setPWM(WristServo, 0, pulselenW);
+//
+//}
+//void indexMov() {
+//  // willt move the indexf finger from 0 to 180 and vice versa
+//  int pulselenI;
+//  if (servPos[2] >= 180) {
+//    for (servPos[2] = 180; servPos[2] >= 0; --servPos[2]) {
+//      pulselenI = map (servPos[2], 0, 180, SERVOMIN, SERVOMAX);
+//      pwm.setPWM(IndexFServo, 0, pulselenI);              // tell servo to go to position in variable 'pos'
+//      delay(15);                       // waits 15ms for the servo to reach the position
+//    }
+//  }
+//  else {
+//    for (servPos[2] = 0; servPos[2] <= 180; ++servPos[2]) {
+//      pulselenI = map (servPos[2], 0, 180, SERVOMIN, SERVOMAX);
+//      pwm.setPWM(IndexFServo, 0, pulselenI);             // tell servo to go to position in variable 'pos'
+//      delay(15);                       // waits 15ms for the servo to reach the position
+//    }
+//  }
+//
+//}
+//
+//void fingers_3F() {
+//  // operates the 3 fingers, move the fringers from 0 to 180 and vice versa
+//  int pulselen3F;
+//  if (servPos[3] >= 160) {
+//    for (servPos[3] = 160; servPos[3] >= 0; --servPos[3]) {
+//      pulselen3F = map (servPos[3], 0, 180, SERVOMIN, SERVOMAX);
+//      pwm.setPWM(F3Servo, 0, pulselen3F); // tell servo to go to position in variable 'pos'
+//      delay(15);                       // waits 15ms for the servo to reach the position
+//    }
+//  }
+//  else {
+//    for (servPos[3] = 0; servPos[3] <= 160; ++servPos[3]) {
+//      pulselen3F = map (servPos[3], 0, 180, SERVOMIN, SERVOMAX);
+//      pwm.setPWM(F3Servo, 0, pulselen3F); // tell servo to go to position in variable 'pos'
+//      delay(15);                       // waits 15ms for the servo to reach the position
+//    }
+//  }
+//
+//}
+//
+//void ThumbMov() {
+//  // move the thum from 0 to 180
+//  // Serial.print("im in thumb move");
+//  int pulselenT;
+//  if (servPos[4] >= 180) {
+//    for (servPos[4] = 180; servPos[4] >= 0; --servPos[4]) {
+//      pulselenT = map (servPos[4], 0, 180, SERVOMIN, SERVOMAX);
+//      pwm.setPWM(ThumbServo, 0, pulselenT);              // tell servo to go to position in variable 'pos'
+//      delay(15);                       // waits 15ms for the servo to reach the position
+//    }
+//  }
+//  else {
+//    for (servPos[4] = 0; servPos[4] <= 180; ++servPos[4]) {
+//      pulselenT = map (servPos[4], 0, 180, SERVOMIN, SERVOMAX);
+//      pwm.setPWM(ThumbServo, 0, pulselenT);              // tell servo to go to position in variable 'pos'
+//      delay(15);                       // waits 15ms for the servo to reach the position
+//    }
+//  }
+//
+//}
 
 void debounceSensorsCount(int reading, int num, int val) {
   // check to see if you just pressed the button
@@ -469,14 +470,14 @@ void loop() {
       Serial.println("switch to LOCK mode");
       cnt = 0;
     }
-    else  if (millis() - lastDebounceTime > 1000 && (cnt == 2)) {
-      mod = CALLIBRATE;
-      Serial.println("switch to callibration mode");
-      Sensors[0].thres = 0;
-      Sensors[1].thres = 0;
-      delay(5000);
-      cnt = 0;
-    }
+//    else  if (millis() - lastDebounceTime > 1000 && (cnt == 2)) {
+//      mod = CALLIBRATE;
+//      Serial.println("switch to callibration mode");
+//      Sensors[0].thres = 0;
+//      Sensors[1].thres = 0;
+//      delay(5000);
+//      cnt = 0;
+//    }
     else
       operation();
 }
